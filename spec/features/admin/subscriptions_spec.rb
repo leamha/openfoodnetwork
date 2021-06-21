@@ -238,7 +238,8 @@ feature 'Subscriptions' do
         expect(page).to have_input "ship_address_city", with: 'Natte Yallock'
         expect(page).to have_input "ship_address_zipcode", with: '3465'
         expect(page).to have_input "ship_address_phone", with: '0400 123 456'
-
+        expect(page).to have_selector "#s2id_ship_address_country_id", text: "Australia"
+        expect(page).to have_selector "#s2id_ship_address_state_id", text: "Victoria"
 
         click_button('Next')
         expect(page).to have_content 'NAME OR SKU'
@@ -249,7 +250,7 @@ feature 'Subscriptions' do
         add_variant_to_subscription test_variant, 0
         click_button('Next')
         expect(page).to have_content 'Please add at least one product'
-        
+
         # Adding a product and getting a price estimate
         add_variant_to_subscription test_variant, 2
         within 'table#subscription-line-items tr.item', match: :first do
