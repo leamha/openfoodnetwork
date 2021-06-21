@@ -247,18 +247,9 @@ feature 'Subscriptions' do
 
         # Adding a product when the quantity is zero
         add_variant_to_subscription test_variant, 0
-        within 'table#subscription-line-items tr.item', match: :first do
-          expect(page).to have_selector '.description', text: "#{test_product.name} - #{test_variant.full_name}"
-          expect(page).to have_selector 'td.price', text: "$13.75"
-          expect(page).to have_input 'quantity', with: "0"
-          expect(page).to have_selector 'td.total', text: "0"
-        end
-        # Deleting the existing product
-        within 'table#subscription-line-items tr.item', match: :first do
-          find("a.delete-item").click
-        end
-
+        click_button('Next')
         expect(page).to have_content 'Please add at least one product'
+        
         # Adding a product and getting a price estimate
         add_variant_to_subscription test_variant, 2
         within 'table#subscription-line-items tr.item', match: :first do
@@ -562,7 +553,11 @@ feature 'Subscriptions' do
     select2_select variant.name, from: "add_variant_id", search: true, select_text: variant_name
     fill_in "add_quantity", with: quantity
     click_link "Add"
-    expect(page).to have_selector("#subscription-line-items .item", count: row_count + 1)
+      if quantity > 0
+        expect(page).to have_selector("#subscription-line-items .item", count: row_count + 1)
+      else
+        expect(page).not_to have_selector("#subscription-line-items .item", count: row_count + 1)
+      end
   end
 
   def variant_not_in_open_or_upcoming_order_cycle_warning
